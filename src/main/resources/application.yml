@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mysql://26.201.192.85:3306/acm?serverTimezone=UTC&characterEncoding=utf-8
+    username: root
+    password: fangyi
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+server:
+  port: 8181
