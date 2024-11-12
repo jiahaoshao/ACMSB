@@ -6,3 +6,4 @@ CREATE TABLE IF NOT EXISTS user (
     email VARCHAR(50),
     phone VARCHAR(20)
 );
+Insert into user (username, password, email, phone) values ('admin', 'admin', 'admin@admin.com', '1234567890');
