@@ -1,7 +1,7 @@
 package net.fangyi.acmsb.controller;
 
 import net.fangyi.acmsb.entity.Sign;
-import net.fangyi.acmsb.repository.UserRepository;
+import net.fangyi.acmsb.repository.SignRepository;
 import net.fangyi.acmsb.result.Result;
 import net.fangyi.acmsb.service.SignService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +15,12 @@ import java.util.List;
 @RequestMapping("/sign")
 @CrossOrigin //解决跨域问题
 public class SignController {
-    //注入userService
+    //注入SignService
     @Autowired
     private SignService signService;
 
     @Autowired
-    private UserRepository userRepository;
+    private SignRepository signRepository;
 
     // MD5加密，32位
     public static String MD5(String str) {
@@ -91,6 +91,6 @@ public class SignController {
 
     @GetMapping("/findAll")
     public List<Sign> findAll() {
-        return userRepository.findAll();
+        return signRepository.findAll();
     }
 }
