@@ -7,9 +7,11 @@ import lombok.Data;
 
 @Entity
 @Data
-public class User {
+public class Sign {
     @Id
     private Integer id;
     private String username;
     private String password;
+    private String email;
+    private String phone;
 }
