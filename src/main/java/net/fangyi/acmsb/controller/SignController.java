@@ -192,7 +192,6 @@ public class SignController {
         return ResponseEntity.ok(Result.success("验证码已发送至邮箱，请查收！", yzm));
     }
 
-
     @GetMapping("/findAll")
     public List<Sign> findAll() {
         return signRepository.findAll();
