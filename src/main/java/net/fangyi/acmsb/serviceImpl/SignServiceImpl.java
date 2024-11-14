@@ -19,7 +19,13 @@ public class SignServiceImpl implements SignService {
     }
 
     @Override
-    public void register(String uname, String psw) {
-        signMapper.add(uname,psw);
+    public void SignUp(String username, String password, String email, String phone, String salt) {
+        signMapper.signup(username, password, email, phone, salt);
     }
+
+    @Override
+    public void resetPassword(String username, String password, String salt) {
+        signMapper.updatePassword(username, password, salt);
+    }
+
 }

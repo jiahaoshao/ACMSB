@@ -14,4 +14,5 @@ public class Sign {
     private String password;
     private String email;
     private String phone;
+    private String Salt;
 }
