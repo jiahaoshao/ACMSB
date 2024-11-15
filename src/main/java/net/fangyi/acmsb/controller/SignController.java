@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import jakarta.servlet.http.HttpServletRequest;
 import net.fangyi.acmsb.AcmsbApplication;
 import net.fangyi.acmsb.Util.RSAUtils;
+import net.fangyi.acmsb.entity.RSAKey;
 import net.fangyi.acmsb.entity.SignInRequest;
 import net.fangyi.acmsb.entity.Sign;
 import net.fangyi.acmsb.entity.SignUpRequest;
@@ -49,23 +50,24 @@ public class SignController {
      * @return
      */
     @ApiOperation(value = "登陆，获取公钥", httpMethod = "GET")
-    @GetMapping("/getpublickey")
-    public ResponseEntity<?> getPublicKey(HttpServletRequest request) {
-        String publicKey = generateKey(request);
-        return ResponseEntity.ok(Result.success("publicKey", publicKey));
+    @GetMapping("/getkey")
+    public ResponseEntity<?> getKey(HttpServletRequest request) {
+        RSAKey key = generateKey(request);
+        return ResponseEntity.ok(Result.success("Key", key));
     }
     /**
      * 生成随机码
      * @param request HttpServletRequest对象
      */
-    private String generateKey(HttpServletRequest request) {
+    private RSAKey generateKey(HttpServletRequest request) {
         Map<String, Object> keyMap = RSAUtils.genKeyPair();
         String publicKey = RSAUtils.getPublicKey(keyMap);
         String privateKey = RSAUtils.getPrivateKey(keyMap);
         request.getSession().setAttribute("privateKey", privateKey);
         logger.info("generatePublicKey: " + publicKey);
         logger.info("generatePrivateKey: " + privateKey);
-        return StringUtils.isBlank(publicKey) ? "" : publicKey;
+        RSAKey rsaKey = new RSAKey(StringUtils.isBlank(publicKey) ? "" : publicKey, StringUtils.isBlank(privateKey) ? "" : privateKey);
+        return rsaKey;
     }
 
     /**

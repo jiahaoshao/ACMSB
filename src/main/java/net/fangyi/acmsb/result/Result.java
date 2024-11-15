@@ -4,7 +4,6 @@ package net.fangyi.acmsb.result;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.fangyi.acmsb.AcmsbApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +18,7 @@ public class Result<T> {
 
     public static <E> Result<E> success(String message, E data) {
         logger.info("Result success with message: " + message + ", data: " + data.toString());
+
         return new Result<>(0, message, data);
     }
 

@@ -387,11 +387,14 @@ public class RSAUtils {
             Map<String, Object> keyMap = RSAUtils.genKeyPair();
             String publicKey = RSAUtils.getPublicKey(keyMap);
             String privateKey = RSAUtils.getPrivateKey(keyMap);
+            publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCdxJ8HYIq/O2TdbPHPN+xpS7PdP8P1nTsYRq+P/DixiTzBp2UxRkZOYNIRj2ddW7GyrQOGxEZB+hEsmYdTgqm+pn2V/TrDJbdkAKxe2kGpXlA+qK49xbJyy5HhrbzgmhrvZZeeTA54Stu/rNpTt9M+4HZiZwnyYo2LdG1q1HUdowIDAQAB";
+            privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJ3Enwdgir87ZN1s8c837GlLs90/w/WdOxhGr4/8OLGJPMGnZTFGRk5g0hGPZ11bsbKtA4bERkH6ESyZh1OCqb6mfZX9OsMlt2QArF7aQaleUD6orj3FsnLLkeGtvOCaGu9ll55MDnhK27+s2lO30z7gdmJnCfJijYt0bWrUdR2jAgMBAAECgYAqjddLORoTfKS3KOSMPQxSVm38Vm+3tyIyaRZ/ostz741ouosL4GWkTG88904tG0dx50LVPempcBbjzcF3n/3ClxroJ0ilmo75670acqKiOL/PxMCVtLAmycE0sJqXug2HkfZR3yttys0NHUS7GgM7P6xKLl3pTwMbYLq+7z/J+QJBANfUOnEe1LtFbwCOwhaI0VVvvc3iiaEcDrKKxSPTkp7Nup5a8Csqdf8wKtNvnQA6OXepc463KEQdoMuOh3Em/WcCQQC7IerUlJVRqGrRAUwS94ZDYlehZecDusrG9TSGGTTjqcCRGsP5kUJCefPY4hz+Us7iu2H/Q7B8l/9XqvIheTxlAkA4TES+UyN8gf0VcSeRhzjLh21EMi5iVxZCXk5ULREW2WUvf1scd2P2H9Nb+cZDU+y/mPTqqj4Xnn7d+hy8WEZLAkB1WxP2NShfiYtTf8jBrFGbOLVUFqAGCsLYezZxUqWEkRSe63YzsREot2phfYxJQo1US8dtWnn36SrNQ/uNWoaxAkEAnLWOApquYUf0MRirl8M4MKv5WyRXfVjehxiIMkQyDEsEhFE+hDNi9e5NWdhfhd/Bs7Qr5GxF1dtL5q7pYYzXDQ==";
             System.out.println("publicKey = " + publicKey);
             System.out.println("privateKey = " + privateKey);
             System.out.println("=============================");
             String s = encryptedDataOnJava("123456", publicKey);
-            System.out.println("java端公钥加密  " + s);
+            //s = "Iym+beeNR3n0fBFADahg26sg6yHCS3VHRb4qoqSRcmdKcPUY8PovgjovBjd2VZAmKc2wTyNTssgnvN6ieuKSJOIY6vb661BOwaf/R42pOfrw44+TpkA8Sck1SbXo1Hf3k8BrYa5tk/dB2H93dFaTQ5PiRPJ3M2cDe2R5a1c9UPM=";
+            System.out.println("java端公钥加密 = " + s);
             String s21 = decryptDataOnJava(s, privateKey);
             System.out.println("java端私钥解密 = " + s21);
 
