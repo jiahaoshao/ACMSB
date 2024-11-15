@@ -7,7 +7,7 @@ public interface SignService {
     Sign findByUsername(String uname);
 
     //注册账户
-    void SignUp(String username, String password, String email, String phone, String salt);
+    long SignUp(String username, String password, String email, String phone, String salt);
 
     //重置密码
     void resetPassword(String username, String password, String salt);

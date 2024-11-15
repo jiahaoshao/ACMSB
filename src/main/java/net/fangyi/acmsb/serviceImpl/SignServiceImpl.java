@@ -19,8 +19,9 @@ public class SignServiceImpl implements SignService {
     }
 
     @Override
-    public void SignUp(String username, String password, String email, String phone, String salt) {
+    public long SignUp(String username, String password, String email, String phone, String salt) {
         signMapper.signup(username, password, email, phone, salt);
+        return signMapper.findByUsername(username).getId();
     }
 
     @Override

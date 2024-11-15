@@ -3,6 +3,7 @@ package net.fangyi.acmsb.controller;
 import io.micrometer.common.util.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import jakarta.servlet.http.HttpServletRequest;
+import net.fangyi.acmsb.AcmsbApplication;
 import net.fangyi.acmsb.Util.RSAUtils;
 import net.fangyi.acmsb.entity.SignInRequest;
 import net.fangyi.acmsb.entity.Sign;
@@ -10,6 +11,8 @@ import net.fangyi.acmsb.entity.SignUpRequest;
 import net.fangyi.acmsb.repository.SignRepository;
 import net.fangyi.acmsb.result.Result;
 import net.fangyi.acmsb.service.SignService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import java.util.Random;
 @RequestMapping("/sign")
 @CrossOrigin //解决跨域问题
 public class SignController {
+    private static final Logger logger = LoggerFactory.getLogger(SignController.class);
     //注入SignService
     @Autowired
     private SignService signService;
@@ -47,7 +51,6 @@ public class SignController {
     @ApiOperation(value = "登陆，获取公钥", httpMethod = "GET")
     @GetMapping("/getpublickey")
     public ResponseEntity<?> getPublicKey(HttpServletRequest request) {
-        //System.out.println("request" + request.getSession());
         String publicKey = generateKey(request);
         return ResponseEntity.ok(Result.success("publicKey", publicKey));
     }
@@ -60,8 +63,8 @@ public class SignController {
         String publicKey = RSAUtils.getPublicKey(keyMap);
         String privateKey = RSAUtils.getPrivateKey(keyMap);
         request.getSession().setAttribute("privateKey", privateKey);
-        //System.out.println("publicKey: " + publicKey);
-        //System.out.println("privateKey: " + privateKey);
+        logger.info("generatePublicKey: " + publicKey);
+        logger.info("generatePrivateKey: " + privateKey);
         return StringUtils.isBlank(publicKey) ? "" : publicKey;
     }
 
@@ -74,9 +77,8 @@ public class SignController {
     @ApiOperation(value = "登录", httpMethod = "POST")
     @PostMapping(value = "/signin")
     public ResponseEntity<?> signin(HttpServletRequest request, @RequestBody SignInRequest signInRequest) {
-        //System.out.println("request" + request.getSession());
         String privateKey = (String) request.getSession().getAttribute("privateKey");
-        System.out.println("signin privateKey: " + privateKey);
+        logger.info("signin privateKey: " + privateKey);
         String account = signInRequest.getUserAccount();
         // 获取登录人信息
         Sign sysUser = signService.findByUsername(account);
@@ -87,9 +89,14 @@ public class SignController {
 
         //从前端获取的密码
         String inputPassword = signInRequest.getPassword();
+        if(inputPassword.isEmpty()) {
+            return ResponseEntity.ok(Result.error("密码不能为空！"));
+        }
         // 密码解密
         String decryptPassword = RSAUtils.decryptDataOnJava(inputPassword, privateKey);
-        System.out.println("decryptPassword: " + decryptPassword);
+        logger.info("signin username:" + account);
+        logger.info("signin inputpassword:" + inputPassword);
+        logger.info("signin decryptPassword: " + decryptPassword);
 
         // 输入和db存入的密码对比， 盐
         boolean isMatch = RSAUtils.hashPasswordIsMatch(sysUser.getPassword(), decryptPassword, sysUser.getSalt());
@@ -108,7 +115,6 @@ public class SignController {
     @PostMapping(value = "/resetpassword")
     public ResponseEntity<?> updatePasswordCostDashboard(HttpServletRequest request, @RequestBody SignUpRequest signUpRequest) {
         String privateKey = (String) request.getSession().getAttribute("privateKey");
-        System.out.println("resetpassword privateKey: " + privateKey);
         String account = signUpRequest.getUserAccount();
         String password = signUpRequest.getPassword();
         String email = signUpRequest.getEmail();
@@ -156,7 +162,8 @@ public class SignController {
         }
         // 解密后的密码
         String DecryptPwd = RSAUtils.decryptDataOnJava(password, privateKey);
-        //System.out.println("DecryptPwd: " + DecryptPwd);
+        logger.info("signup decryptPassword: " + DecryptPwd);
+        logger.info("signup username:" + account);
         // 生成盐
         byte[] saltBytes = RSAUtils.generateSalt();
         String saltStr = RSAUtils.bytesToHex(saltBytes);

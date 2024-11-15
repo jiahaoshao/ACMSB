@@ -4,6 +4,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import net.fangyi.acmsb.AcmsbApplication;
+import net.fangyi.acmsb.controller.SignController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -11,6 +15,7 @@ import java.io.IOException;
 
 @Component
 public class AddResponseHeaderFilter extends OncePerRequestFilter {
+    private static final Logger logger = LoggerFactory.getLogger(AddResponseHeaderFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
@@ -19,7 +24,7 @@ public class AddResponseHeaderFilter extends OncePerRequestFilter {
         httpServletResponse.addHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
         httpServletResponse.addHeader("Cache-Control", "no-cache='set-cookie'");
         httpServletResponse.addHeader("Pragma", "no-cache");
-        System.out.println("SessionId:" + httpServletRequest.getSession().getId());
+        logger.info("SessionId:" + httpServletRequest.getSession().getId());
         //支持跨域请求
         httpServletResponse.setHeader("Access-Control-Allow-Origin",httpServletRequest.getHeader("Origin"));
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "*");
