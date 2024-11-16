@@ -17,19 +17,22 @@ public class Result<T> {
     private T data;
 
     public static <E> Result<E> success(String message, E data) {
-        logger.info("Result success with message: " + message + ", data: " + data.toString());
-
+        logger.info("Result success with message: {}, data: {}", message, data.toString());
         return new Result<>(0, message, data);
     }
 
     public static Result success(String message) {
-        logger.info("Result success with message: " + message);
+        logger.info("Result success with message: {}", message);
         return new Result(0, message, null);
     }
 
     public static Result error(String message) {
-        logger.info("Result error with message: " + message);
+        logger.info("Result error with message: {}" , message);
         return new Result(1, message, null);
     }
 
+    public static <E> Result<E> error(String message, E data) {
+        logger.info("Result error with message: {}, data: {}", message, data.toString());
+        return new Result<>(1, message, data);
+    }
 }

@@ -1,10 +1,12 @@
 package net.fangyi.acmsb.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import io.micrometer.common.util.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import jakarta.servlet.http.HttpServletRequest;
 import net.fangyi.acmsb.AcmsbApplication;
 import net.fangyi.acmsb.Util.RSAUtils;
+import net.fangyi.acmsb.Util.TokenUtil;
 import net.fangyi.acmsb.entity.RSAKey;
 import net.fangyi.acmsb.entity.SignInRequest;
 import net.fangyi.acmsb.entity.Sign;
@@ -102,10 +104,21 @@ public class SignController {
 
         // 输入和db存入的密码对比， 盐
         boolean isMatch = RSAUtils.hashPasswordIsMatch(sysUser.getPassword(), decryptPassword, sysUser.getSalt());
+        //配置token
+        JSONObject jsonObject = new JSONObject();
         if(isMatch) {
-            return ResponseEntity.ok(Result.success("登录成功！"));
+            String token = TokenUtil.sign(sysUser);
+            jsonObject.put("token", token);
+            jsonObject.put("user",sysUser);
+            jsonObject.put("msg","登录成功");
+            jsonObject.put("code",200);
+            return ResponseEntity.ok(jsonObject);
+        }else {
+            jsonObject.put("msg","账号或密码错误");
+            jsonObject.put("code",500);
+            return ResponseEntity.ok(jsonObject);
         }
-        return ResponseEntity.ok(Result.error("用户名或密码错误！"));
+
     }
 
     /**

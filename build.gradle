@@ -31,6 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.jetbrains:annotations:24.0.0'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -42,6 +43,8 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
+    implementation group: 'com.alibaba', name: 'fastjson', version: '2.0.49'
 }
 
 tasks.named('test') {
