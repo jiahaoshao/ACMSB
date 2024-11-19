@@ -21,6 +21,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         }
         response.setCharacterEncoding("utf-8");
         String token = request.getHeader("token"); //前端vue将token添加在请求头中
+        logger.info("请求来自: {}, 请求方法: {}, 请求 token: {}", request.getRequestURI(), request.getMethod(), token);
         if(token != null){
             boolean result = TokenUtil.verify(token);
             if(result){
@@ -35,7 +36,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             json.put("msg","token verify fail");
             json.put("code","50000");
             response.getWriter().append(json.toJSONString());
-            logger.info("认证失败，未通过拦截器");
+            logger.warn("Token 验证失败: 未提供 Token");
 
         }catch (Exception e){
             e.printStackTrace();

@@ -28,11 +28,20 @@ spring:
             starttls:
               enable: true
               required: true
+  mvc:
+    static-path-pattern: static/**
+  devtools:
+    restart:
+          # 开启热部署（更改文件后，自动重启）
+          enabled: true
+          ## 设置哪些资源变动后不触发热部署，会覆盖默认的exclude内容（资源不会触发重启，但会触发实时重新加载）
+          exclude:
+          ## 监控额外的路径（优先于exclude）
+          additional-paths: src/main/java
+          log-condition-evaluation-delta: false
+  upload:
+    dir: "http://26.201.192.85:8181"
 server:
   port: 8181
 
-#  servlet:
-#    context-path: /api
-#    session:
-#      cookie:
-#        domain: 26.201.192.85 # 携带cookie域名
+

@@ -1,9 +1,9 @@
 package net.fangyi.acmsb.repository;
 
 import net.fangyi.acmsb.entity.Sign;
+import net.fangyi.acmsb.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SignRepository extends JpaRepository<Sign, Integer> {
-    Sign findByUsername(String username);
-
+public interface UserRepository extends JpaRepository<User, Integer> {
+    User findByUid(int uid);
 }

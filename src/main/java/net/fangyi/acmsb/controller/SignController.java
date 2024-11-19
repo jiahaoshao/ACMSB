@@ -7,11 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import net.fangyi.acmsb.AcmsbApplication;
 import net.fangyi.acmsb.Util.RSAUtils;
 import net.fangyi.acmsb.Util.TokenUtil;
-import net.fangyi.acmsb.entity.RSAKey;
-import net.fangyi.acmsb.entity.SignInRequest;
-import net.fangyi.acmsb.entity.Sign;
-import net.fangyi.acmsb.entity.SignUpRequest;
+import net.fangyi.acmsb.entity.*;
 import net.fangyi.acmsb.repository.SignRepository;
+import net.fangyi.acmsb.repository.UserRepository;
 import net.fangyi.acmsb.result.Result;
 import net.fangyi.acmsb.service.SignService;
 import org.slf4j.Logger;
@@ -23,6 +21,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -30,6 +30,11 @@ import java.util.Random;
 @RestController
 @RequestMapping("/sign")
 @CrossOrigin //解决跨域问题
+
+/**
+ *
+ * SignController 用于处理用户注册、登录、重设密码等功能
+ */
 public class SignController {
     private static final Logger logger = LoggerFactory.getLogger(SignController.class);
     //注入SignService
@@ -38,6 +43,9 @@ public class SignController {
 
     @Autowired
     private SignRepository signRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     JavaMailSender javaMailSender; //可直接注入邮件发送的对象
@@ -82,10 +90,10 @@ public class SignController {
     @PostMapping(value = "/signin")
     public ResponseEntity<?> signin(HttpServletRequest request, @RequestBody SignInRequest signInRequest) {
         String privateKey = (String) request.getSession().getAttribute("privateKey");
-        logger.info("signin privateKey: " + privateKey);
+        logger.info("signin privateKey: {}", privateKey);
         String account = signInRequest.getUserAccount();
         // 获取登录人信息
-        Sign sysUser = signService.findByUsername(account);
+        Sign sysUser = signRepository.findByUsername(account);
 
         if(sysUser == null) {
             return ResponseEntity.ok(Result.error("用户不存在"));
@@ -98,24 +106,26 @@ public class SignController {
         }
         // 密码解密
         String decryptPassword = RSAUtils.decryptDataOnJava(inputPassword, privateKey);
-        logger.info("signin username:" + account);
-        logger.info("signin inputpassword:" + inputPassword);
-        logger.info("signin decryptPassword: " + decryptPassword);
+        logger.info("signin username:{}", account);
+        logger.info("signin inputpassword:{}", inputPassword);
+        logger.info("signin decryptPassword: {}", decryptPassword);
 
         // 输入和db存入的密码对比， 盐
         boolean isMatch = RSAUtils.hashPasswordIsMatch(sysUser.getPassword(), decryptPassword, sysUser.getSalt());
         //配置token
         JSONObject jsonObject = new JSONObject();
         if(isMatch) {
-            String token = TokenUtil.sign(sysUser);
+            User user = userRepository.findByUid(sysUser.getId() + 1000000);
+
+            String token = TokenUtil.sign(user);
             jsonObject.put("token", token);
-            jsonObject.put("user",sysUser);
-            jsonObject.put("msg","登录成功");
-            jsonObject.put("code",200);
+            jsonObject.put("user", user);
+            jsonObject.put("message", "登录成功");
+            jsonObject.put("code", 200);
             return ResponseEntity.ok(jsonObject);
         }else {
-            jsonObject.put("msg","账号或密码错误");
-            jsonObject.put("code",500);
+            jsonObject.put("message", "账号或密码错误");
+            jsonObject.put("code", 500);
             return ResponseEntity.ok(jsonObject);
         }
 
@@ -133,7 +143,7 @@ public class SignController {
         String account = signUpRequest.getUserAccount();
         String password = signUpRequest.getPassword();
         String email = signUpRequest.getEmail();
-        Sign sysUser = signService.findByUsername(account);
+        Sign sysUser = signRepository.findByUsername(account);
         if(sysUser == null) {
             return ResponseEntity.ok(Result.error("用户不存在!"));
         }
@@ -166,25 +176,41 @@ public class SignController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(HttpServletRequest request, @RequestBody SignUpRequest signUpRequest){
         String privateKey = (String) request.getSession().getAttribute("privateKey");
-        System.out.println("signup privateKey: " + privateKey);
+        logger.info("signup privateKey: {}", privateKey);
         String account = signUpRequest.getUserAccount();
         String password = signUpRequest.getPassword();
         String email = signUpRequest.getEmail();
         String phone = signUpRequest.getPhone();
-        Sign sysUser = signService.findByUsername(account);
+        Sign sysUser = signRepository.findByUsername(account);
         if(sysUser != null) {
             return ResponseEntity.ok(Result.error("用户已存在"));
         }
         // 解密后的密码
         String DecryptPwd = RSAUtils.decryptDataOnJava(password, privateKey);
-        logger.info("signup decryptPassword: " + DecryptPwd);
-        logger.info("signup username:" + account);
+        logger.info("signup decryptPassword: {}", DecryptPwd);
+        logger.info("signup username:{}", account);
         // 生成盐
         byte[] saltBytes = RSAUtils.generateSalt();
         String saltStr = RSAUtils.bytesToHex(saltBytes);
         // 加盐后的密码
         String hashPassword =  RSAUtils.hashPassword(DecryptPwd, saltBytes);
-        signService.SignUp(account, hashPassword, email, phone, saltStr);
+        int uid = 1000000 + signService.SignUp(account, hashPassword, email, phone, saltStr);
+        // 获取当前日期和时间
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        // 定义时间格式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // 格式化输出
+        String formattedDateTime = currentDateTime.format(formatter);
+        User user = new User();
+        user.setUid(uid);
+        user.setUserAccount(account);
+        user.setUsername(account);
+        user.setEmail(email);
+        user.setPhone(phone);
+        user.setCreateTime(formattedDateTime);
+        user.setRole("ADMIN");
+        user.setStatus("zc");
+        userRepository.save(user);
         return ResponseEntity.ok(Result.success("注册成功！"));
     }
 
@@ -211,6 +237,7 @@ public class SignController {
         message.setText(content);
         //发送邮件
         javaMailSender.send(message);
+        logger.info("EmailVerifyCode: {}", yzm);
         return ResponseEntity.ok(Result.success("验证码已发送至邮箱，请查收！", yzm));
     }
 
