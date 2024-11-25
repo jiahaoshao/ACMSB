@@ -2,13 +2,8 @@ package net.fangyi.acmsb.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import net.fangyi.acmsb.Util.UploadFileUtil;
-import net.fangyi.acmsb.entity.Picture;
-import net.fangyi.acmsb.entity.Sign;
-import net.fangyi.acmsb.entity.User;
-import net.fangyi.acmsb.repository.PictureRepository;
 import net.fangyi.acmsb.repository.UserRepository;
 import net.fangyi.acmsb.result.Result;
-import net.fangyi.acmsb.service.PictureService;
 import net.fangyi.acmsb.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +41,9 @@ public class UploadFileController {
     @Operation(summary = "上传头像到本地")
     @PostMapping("/avatar")
     public ResponseEntity<?> upload_avatar(@RequestParam("file") MultipartFile file, @RequestParam("uid") int uid) throws IOException {
+        if(userRepository.findById(uid).isEmpty()) {
+            return ResponseEntity.ok(Result.error("用户不存在"));
+        }
         if(file.isEmpty()){
             return ResponseEntity.ok(Result.error("文件为空"));
         }

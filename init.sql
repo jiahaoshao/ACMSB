@@ -23,10 +23,10 @@ CREATE TABLE IF NOT EXISTS user (
     avatar VarChar(200)
 );
 
-DROP TABLE IF EXISTS picture;
-CREATE TABLE IF NOT EXISTS picture(
-    id  INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    pid INT UNSIGNED,
-    name VARCHAR(50),
-    pic_data LONGBLOB
-)
+# DROP TABLE IF EXISTS picture;
+# CREATE TABLE IF NOT EXISTS picture(
+#     id  INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+#     pid INT UNSIGNED,
+#     name VARCHAR(50),
+#     pic_data LONGBLOB
+# )

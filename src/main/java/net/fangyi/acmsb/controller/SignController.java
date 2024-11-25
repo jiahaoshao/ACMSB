@@ -63,6 +63,7 @@ public class SignController {
     @GetMapping("/getkey")
     public ResponseEntity<?> getKey(HttpServletRequest request) {
         RSAKey key = generateKey(request);
+        addAdminUser(); //添加管理员账号
         return ResponseEntity.ok(Result.success("Key", key));
     }
     /**
@@ -204,12 +205,13 @@ public class SignController {
         User user = new User();
         user.setUid(uid);
         user.setUserAccount(account);
-        user.setUsername(account);
+        user.setUsername("acm_" + account);
         user.setEmail(email);
         user.setPhone(phone);
         user.setCreateTime(formattedDateTime);
-        user.setRole("ADMIN");
-        user.setStatus("zc");
+        user.setRole("普通用户");
+        user.setStatus("正常");
+        user.setAvatar("static/images/avatar/default.png");
         userRepository.save(user);
         return ResponseEntity.ok(Result.success("注册成功！"));
     }
@@ -237,7 +239,7 @@ public class SignController {
         message.setText(content);
         //发送邮件
         javaMailSender.send(message);
-        logger.info("EmailVerifyCode: {}", yzm);
+        logger.info("EmailVerifyCode: {}, send to: {}", yzm, email);
         return ResponseEntity.ok(Result.success("验证码已发送至邮箱，请查收！", yzm));
     }
 
@@ -248,5 +250,43 @@ public class SignController {
     @GetMapping("/findAll")
     public List<Sign> findAll() {
         return signRepository.findAll();
+    }
+
+    private void addAdminUser() {
+        if(signRepository.findByUsername("admin") != null) {
+            return;
+        }
+        // 生成盐
+        byte[] saltBytes = RSAUtils.generateSalt();
+        String saltStr = RSAUtils.bytesToHex(saltBytes);
+        // 加盐后的密码
+        String hashPassword =  RSAUtils.hashPassword("123456", saltBytes);
+
+        Sign sign = new Sign();
+        sign.setUsername("admin");
+        sign.setPassword(hashPassword);
+        sign.setSalt(saltStr);
+        sign.setEmail("2370145097@qq.com");
+        sign.setPhone("15727931358");
+        signRepository.save(sign);
+        sign = signRepository.findByUsername("admin");
+        // 获取当前日期和时间
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        // 定义时间格式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // 格式化输出
+        String formattedDateTime = currentDateTime.format(formatter);
+
+        User user = new User();
+        user.setUid(sign.getId() + 1000000);
+        user.setUserAccount(sign.getUsername());
+        user.setUsername("acm_" + sign.getUsername() );
+        user.setEmail(sign.getEmail());
+        user.setPhone(sign.getPhone());
+        user.setCreateTime(formattedDateTime);
+        user.setRole("管理员");
+        user.setStatus("正常");
+        user.setAvatar("static/images/avatar/default.png");
+        userRepository.save(user);
     }
 }
