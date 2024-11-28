@@ -30,3 +30,14 @@ CREATE TABLE IF NOT EXISTS user (
 #     name VARCHAR(50),
 #     pic_data LONGBLOB
 # )
+
+DROP TABLE IF EXISTS article;
+CREATE TABLE article  (
+                            id bigint NOT NULL AUTO_INCREMENT,
+                            title varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                            content text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                            author varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+                            PRIMARY KEY (id) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 51 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+SET FOREIGN_KEY_CHECKS = 1;
