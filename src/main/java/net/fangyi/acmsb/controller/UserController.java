@@ -6,10 +6,7 @@ import net.fangyi.acmsb.repository.UserRepository;
 import net.fangyi.acmsb.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -26,5 +23,20 @@ public class UserController {
             return ResponseEntity.ok(Result.error("用户不存在"));
         }
         return ResponseEntity.ok(Result.success("更新成功", user));
+
+    }
+    /**
+     * 根据uid查询用户信息
+     * @param uid
+     * @return
+     */
+
+    @GetMapping("/finduserbyuid")
+    public ResponseEntity<?> findUserByUid(@RequestParam int uid) {
+        User user = userRepository.findByUid(uid);
+        if (user == null) {
+            return ResponseEntity.ok(Result.error("用户不存在"));
+        }
+        return ResponseEntity.ok(Result.success("查询成功", user));
     }
 }

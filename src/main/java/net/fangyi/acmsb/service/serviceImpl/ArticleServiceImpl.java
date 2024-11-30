@@ -24,6 +24,11 @@ public class ArticleServiceImpl implements ArticleService {
         return articleRepository.findAll(pageable);
     }
 
+    @Override
+    public Article getArticleById(int id) {
+        return articleMapper.getArticleById(id);
+    }
+
     // 更新文章
     @Override
     public void updateArticle(Article article) {

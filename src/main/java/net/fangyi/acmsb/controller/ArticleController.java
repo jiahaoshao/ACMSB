@@ -82,4 +82,9 @@ public class ArticleController {
         }
         return ResponseEntity.ok(Result.success("保存成功", article));
     }
+    @GetMapping("/getArticleById")
+    public ResponseEntity<?> getArticleById(@RequestParam int id){
+        Article article=articleService.getArticleById(id);
+        return ResponseEntity.ok(Result.success("保存成功",article));
+    }
 }

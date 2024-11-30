@@ -36,7 +36,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         excludePath.add("/static/**");
         excludePath.add("/static/images/avatar/**");
         excludePath.add("/static/images/article_image/**");
-        excludePath.add("/articles/getarticles/**");
+        excludePath.add("/articles/**");
+        excludePath.add("/user/finduserbyuid");
 
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
