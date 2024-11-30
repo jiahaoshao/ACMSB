@@ -35,7 +35,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         excludePath.add("/sign/**");
         excludePath.add("/static/**");
         excludePath.add("/static/images/avatar/**");
-        excludePath.add("/articles/**");
+        excludePath.add("/static/images//article_image/**");
 
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
@@ -50,6 +50,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
         String filepath = "file:" + resourcesPath;
         logger.info("avatar file path: {}", filepath);
         registry.addResourceHandler("static/images/avatar/**")
+                .addResourceLocations(filepath);
+
+        resourcesPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\images\\article_image\\";
+        filepath = "file:" + resourcesPath;
+        logger.info("article image file path: {}", filepath);
+        registry.addResourceHandler("static/images/article_image/**")
                 .addResourceLocations(filepath);
     }
 }

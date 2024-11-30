@@ -5,6 +5,7 @@ import io.micrometer.common.util.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import jakarta.servlet.http.HttpServletRequest;
 import net.fangyi.acmsb.AcmsbApplication;
+import net.fangyi.acmsb.Util.DateUtil;
 import net.fangyi.acmsb.Util.RSAUtils;
 import net.fangyi.acmsb.Util.TokenUtil;
 import net.fangyi.acmsb.entity.*;
@@ -196,19 +197,13 @@ public class SignController {
         // 加盐后的密码
         String hashPassword =  RSAUtils.hashPassword(DecryptPwd, saltBytes);
         int uid = 1000000 + signService.SignUp(account, hashPassword, email, phone, saltStr);
-        // 获取当前日期和时间
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        // 定义时间格式
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        // 格式化输出
-        String formattedDateTime = currentDateTime.format(formatter);
         User user = new User();
         user.setUid(uid);
         user.setUserAccount(account);
         user.setUsername("acm_" + account);
         user.setEmail(email);
         user.setPhone(phone);
-        user.setCreateTime(formattedDateTime);
+        user.setCreateTime(DateUtil.getNowTime());
         user.setRole("普通用户");
         user.setStatus("正常");
         user.setAvatar("static/images/avatar/default.png");
@@ -270,12 +265,6 @@ public class SignController {
         sign.setPhone("15727931358");
         signRepository.save(sign);
         sign = signRepository.findByUsername("admin");
-        // 获取当前日期和时间
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        // 定义时间格式
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        // 格式化输出
-        String formattedDateTime = currentDateTime.format(formatter);
 
         User user = new User();
         user.setUid(sign.getId() + 1000000);
@@ -283,7 +272,7 @@ public class SignController {
         user.setUsername("acm_" + sign.getUsername() );
         user.setEmail(sign.getEmail());
         user.setPhone(sign.getPhone());
-        user.setCreateTime(formattedDateTime);
+        user.setCreateTime(DateUtil.getNowTime());
         user.setRole("管理员");
         user.setStatus("正常");
         user.setAvatar("static/images/avatar/default.png");

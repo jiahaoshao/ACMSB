@@ -61,5 +61,29 @@ public class UploadFileController {
         userService.UpdateAvatar(uid, avatarUrl);
         return ResponseEntity.ok(Result.success("上传成功"));
     }
-    
+
+    @Operation(summary = "上传图片到本地")
+    @PostMapping("/article_images")
+    public ResponseEntity<?> uploadArticleImages(@RequestParam("files") MultipartFile[] files) throws IOException {
+        List<String> uploadedUrls = new ArrayList<>();
+        for (MultipartFile file : files) {
+            if (file.isEmpty()) {
+                return ResponseEntity.ok(Result.error("文件为空"));
+            }
+            if (file.getSize() > AVATAR_MAX_SIZE) {
+                return ResponseEntity.ok(Result.error("文件大小超出限制"));
+            }
+            String contentType = file.getContentType();
+            if (!AVATAR_TYPE.contains(contentType)) {
+                return ResponseEntity.ok(Result.error("文件类型不支持"));
+            }
+            String articleImageUrl = UploadFileUtil.upload(file, "static/images/article_image");
+            if (articleImageUrl == null) {
+                return ResponseEntity.ok(Result.error("上传失败"));
+            }
+            uploadedUrls.add(articleImageUrl);
+        }
+        return ResponseEntity.ok(Result.success("上传成功", uploadedUrls));
+    }
+
 }
