@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,7 +33,7 @@ public class ArticleController {
      * @param limit
      * @return
      */
-    @GetMapping("/getArticles")
+    @GetMapping("/getarticles")
     public ResponseEntity<?> getArticles(
             @RequestParam(defaultValue = "1") int page, // 默认第一页
             @RequestParam(defaultValue = "10") int limit // 默认每页 10 条

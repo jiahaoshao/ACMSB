@@ -1,5 +1,8 @@
 package net.fangyi.acmsb.entity;
 
+
+import com.alibaba.fastjson2.JSONArray;
+import com.google.gson.Gson;
 import lombok.Data;
 
 import java.util.List;
@@ -16,6 +19,7 @@ public class ArticleRequest {
     private String status; //文章状态
 
     public Article toArticle() {
+        Gson gson = new Gson();
         Article article = new Article();
         article.setAid(aid);
         article.setTitle(title);
@@ -23,7 +27,7 @@ public class ArticleRequest {
         article.setAuthorId(authorId);
         article.setCreateTime(createTime);
         article.setClassify(classify);
-        article.setTags(String.valueOf(tags));
+        article.setTags(gson.toJson(tags));
         article.setStatus(status);
         return article;
     }

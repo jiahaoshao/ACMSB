@@ -36,4 +36,4 @@ CREATE TABLE IF NOT EXISTS article
     classify    VARCHAR(200),
     tags        JSON,
     status      VARCHAR(20)
-);
+) CHARACTER SET utf8 COLLATE utf8_general_ci;
