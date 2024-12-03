@@ -101,7 +101,7 @@ public class UploadFileUtil {
      * @return File
      * @throws FileNotFoundException
      */
-    static List<File> getUploadDirectory(String dir) throws FileNotFoundException {
+    public static List<File> getUploadDirectory(String dir) throws FileNotFoundException {
         // 开发环境 resources 目录：可永久保存
         String resourcesPath = System.getProperty("user.dir") + "/src/main/resources/";
         //System.out.printf("resources目录路径：" + resourcesPath);
@@ -115,6 +115,8 @@ public class UploadFileUtil {
         files.add(upload);
         return files;
     }
+
+
 
     public static String upload(MultipartFile myFile, String dir) throws IOException {
         String filePath = "";
