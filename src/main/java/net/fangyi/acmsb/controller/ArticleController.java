@@ -41,17 +41,17 @@ public class ArticleController {
         // 获取分页结果
         Page<Article> articlePage = articleService.getArticles(page, limit);
 
-        if(articlePage.isEmpty())
-        {
-            for(int i = 0; i < 20; i ++)
-            {
-                Article article = new Article();
-                article.setTitle(i + "号文章");
-                article.setContent(i + "号文章的内容");
-                article.setAuthorId(i);
-                articleRepository.save(article);
-            }
-        }
+//        if(articlePage.isEmpty())
+//        {
+//            for(int i = 0; i < 20; i ++)
+//            {
+//                Article article = new Article();
+//                article.setTitle(i + "号文章");
+//                article.setContent(i + "号文章的内容");
+//                article.setAuthorId(i);
+//                articleRepository.save(article);
+//            }
+//        }
 
         // 构建返回的响应数据
         Map<String, Object> response = new HashMap<>();

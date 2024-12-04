@@ -206,7 +206,7 @@ public class SignController {
         user.setCreateTime(DateUtil.getNowTime());
         user.setRole("普通用户");
         user.setStatus("正常");
-        user.setAvatar("static/images/avatar/default.png");
+        user.setAvatar("https://jsd.cdn.zzko.cn/gh/fangyi002/picture_bed/images/avatar/default.png");
         userRepository.save(user);
         return ResponseEntity.ok(Result.success("注册成功！"));
     }
@@ -275,7 +275,7 @@ public class SignController {
         user.setCreateTime(DateUtil.getNowTime());
         user.setRole("管理员");
         user.setStatus("正常");
-        user.setAvatar("static/images/avatar/default.png");
+        user.setAvatar("https://jsd.cdn.zzko.cn/gh/fangyi002/picture_bed/images/avatar/default.png");
         userRepository.save(user);
     }
 }
