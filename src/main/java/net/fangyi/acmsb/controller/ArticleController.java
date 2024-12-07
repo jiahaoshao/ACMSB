@@ -82,4 +82,13 @@ public class ArticleController {
         }
         return ResponseEntity.ok(Result.success("保存成功", article));
     }
+
+    @GetMapping("/getarticlebyaid")
+    public ResponseEntity<?> getArticleByAid(@RequestParam int aid){
+        Article article = articleRepository.getArticleByAid(aid);
+        if(article == null) {
+            return ResponseEntity.ok(Result.error("文章不存在"));
+        }
+        return ResponseEntity.ok(Result.success("查询成功", article));
+    }
 }

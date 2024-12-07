@@ -109,7 +109,7 @@ public class GithubController {
             return ResponseEntity.ok(Result.success("上传成功", downloadUrl));
         } else {
             logger.error("File upload failed: {}", response.body());
-            return ResponseEntity.status(response.statusCode()).body(Result.error("上传失败", response.body()));
+            return ResponseEntity.ok(Result.error("上传失败", response.body()));
         }
     }
 

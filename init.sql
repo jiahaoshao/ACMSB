@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS sign;
+#DROP TABLE IF EXISTS sign;
 CREATE TABLE IF NOT EXISTS sign
 (
     id       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS sign
 );
 # Insert into sign (username, password, email, phone) values ('admin', '123456', 'admin@admin.com', '1234567890');
 
-DROP TABLE IF EXISTS user;
+#DROP TABLE IF EXISTS user;
 CREATE TABLE IF NOT EXISTS user
 (
     id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS user
     avatar       VarChar(200)
 );
 
-DROP TABLE IF EXISTS article;
+#DROP TABLE IF EXISTS article;
 CREATE TABLE IF NOT EXISTS article
 (
     aid         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -36,4 +36,31 @@ CREATE TABLE IF NOT EXISTS article
     classify    VARCHAR(200),
     tags        JSON,
     status      VARCHAR(20)
-) CHARACTER SET utf8 COLLATE utf8_general_ci;
+) CHARACTER SET utf8
+  COLLATE utf8_general_ci;
+
+
+# CREATE TABLE IF NOT EXISTS chat_request
+# (
+#     id     INT AUTO_INCREMENT PRIMARY KEY,
+#     chatid INT NOT NULL,
+#     uid    INT NOT NULL
+# );
+#
+# CREATE TABLE IF NOT EXISTS message
+# (
+#     id              INT AUTO_INCREMENT PRIMARY KEY,
+#     role            VARCHAR(255) NOT NULL,
+#     content         TEXT         NOT NULL,
+#     chat_request_id INT,
+#     FOREIGN KEY (chat_request_id) REFERENCES chat_request (id)
+# );
+
+DROP TABLE IF EXISTS chat_request_copy;
+CREATE TABLE IF NOT EXISTS chat_request_copy
+(
+    id       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    chatid   INT NOT NULL,
+    uid      INT NOT NULL,
+    messages TEXT
+);

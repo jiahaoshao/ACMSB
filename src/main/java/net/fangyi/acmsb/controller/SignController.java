@@ -13,15 +13,24 @@ import net.fangyi.acmsb.repository.SignRepository;
 import net.fangyi.acmsb.repository.UserRepository;
 import net.fangyi.acmsb.result.Result;
 import net.fangyi.acmsb.service.SignService;
+import okhttp3.OkHttpClient;
+import org.apache.catalina.connector.Request;
+import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -230,12 +239,24 @@ public class SignController {
         //邮件标题
         message.setSubject("创意交流平台验证码");
         //邮件内容
-        String content = String.format("您的验证码为 %s", yzm);
+        String content = String.format("【创意交流平台】您的创意交流平台验证码是： %s， 切勿将验证码泄露给他人", yzm);
         message.setText(content);
         //发送邮件
         javaMailSender.send(message);
         logger.info("EmailVerifyCode: {}, send to: {}", yzm, email);
         return ResponseEntity.ok(Result.success("验证码已发送至邮箱，请查收！", yzm));
+    }
+
+    @GetMapping("/getphoneverifycode")
+    public ResponseEntity<?> getPhoneVerifyCode(@RequestParam String phone) throws IOException, InterruptedException {
+        String apiUrl = "https://apis.netstart.cn/music/captcha/sent?phone=" + phone;
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return ResponseEntity.ok(response.body());
     }
 
     /**
