@@ -2,6 +2,7 @@ package net.fangyi.acmsb.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.context.annotation.Bean;
 
 @Mapper
 public interface ArticleMapper {

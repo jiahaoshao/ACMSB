@@ -45,8 +45,8 @@ public class GithubController {
     @Value("${Github.REPO}")
     private String repo;  // Github 仓库的名称
 
-    @Value("${Github.Authorization}")
-    private String token;  // Github 个人访问令牌
+    //@Value("${Github.Authorization}")
+    private String token = "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";  // Github 个人访问令牌
     
     
     
@@ -225,6 +225,59 @@ public class GithubController {
      */
     private String encryptToBase64(String content) throws IOException {
         return Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get(content)));
+    }
+
+    public String uploadAvatar(MultipartFile file, String branch, String committerName, String committerEmail, String commitMessage, String owner, String repo, String token) throws IOException, InterruptedException {
+
+        String originalFilename = file.getOriginalFilename();
+        if(originalFilename == null){
+            return "上传失败";
+        }
+        //获取文件后缀
+        String suffix = FileUtils.getFileSuffix(originalFilename);//使用到了自己编写的FileUtils工具类
+        //拼接存储的图片名称
+        String filename = System.currentTimeMillis()+"_"+ UUID.randomUUID().toString()+suffix;
+
+        String filePath = "images/avatar/";
+
+        String path = filePath + filename;
+
+        logger.info("Uploading file to Github repository: {}", path);
+
+        String contents = Base64.getEncoder().encodeToString(file.getBytes());
+
+        String apiUrl = String.format("https://api.github.com/repos/%s/%s/contents/%s", owner, repo, path);
+        logger.info("API URL: {}", apiUrl);
+
+        String basicAuth = Base64.getEncoder().encodeToString((token + ":").getBytes());
+        String authorizationHeader = "Basic " + basicAuth;
+
+        String requestBody = String.format(
+                "{\"message\":\"%s\", \"branch\":\"%s\", \"committer\":{\"name\":\"%s\", \"email\":\"%s\"}, \"content\":\"%s\"}",
+                commitMessage, branch, committerName, committerEmail, contents
+        );
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
+                .header("Authorization", authorizationHeader)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/vnd.github.v3+json")
+                .PUT(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200 || response.statusCode() == 201) {
+            logger.info("Response Code: {}", response.statusCode());
+            logger.info("Response Body: {}", response.body());
+
+            String downloadUrl = "https://jsd.cdn.zzko.cn/gh/" + owner + "/" + repo + "/" + path;
+            return downloadUrl;
+        } else {
+            logger.error("File upload failed: {}", response.body());
+            return "上传失败";
+        }
     }
 }
 

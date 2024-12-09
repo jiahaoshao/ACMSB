@@ -1,5 +1,6 @@
 package net.fangyi.acmsb.controller;
 
+import cn.hutool.json.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.fangyi.acmsb.entity.ChatRequest;
@@ -7,6 +8,9 @@ import net.fangyi.acmsb.entity.ChatRequestCopy;
 import net.fangyi.acmsb.entity.Message;
 import net.fangyi.acmsb.repository.ChatRequestCopyRepository;
 import net.fangyi.acmsb.repository.UserRepository;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import org.apache.catalina.connector.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,9 +180,33 @@ public class AiController {
         return ResponseEntity.ok(response.body());
     }
 
+//    @PostMapping("/music")
+//    public ResponseEntity<?> Music(){
+//        try {
+//            Map<String, Object> requestBody = Map.of(); // Add your request body content here
+//
+//            String requestBodyJson = objectMapper.writeValueAsString(requestBody);
+//
+//            HttpRequest request = HttpRequest.newBuilder()
+//                    .uri(new URI("https://api.acedata.cloud/suno/audios"))
+//                    .header("Content-Type", "application/json")
+//                    .POST(HttpRequest.BodyPublishers.ofString(requestBodyJson, StandardCharsets.UTF_8))
+//                    .build();
+//
+//            HttpClient client = HttpClient.newHttpClient();
+//            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+//
+//            System.out.println(response.body());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     @GetMapping("/getchats")
     public ResponseEntity<?> getChats(@RequestParam int uid) {
         List<ChatRequestCopy> chatRequestCopies = chatRequestCopyRepository.findAllByUid(uid);
         return ResponseEntity.ok(chatRequestCopies);
     }
+
+
 }
