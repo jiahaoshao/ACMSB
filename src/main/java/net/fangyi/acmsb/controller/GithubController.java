@@ -45,8 +45,8 @@ public class GithubController {
     @Value("${Github.REPO}")
     private String repo;  // Github 仓库的名称
 
-    //@Value("${Github.Authorization}")
-    private String token = "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";  // Github 个人访问令牌
+    @Value("${Github.Authorization}")
+    private String token;  // Github 个人访问令牌
     
     
     
