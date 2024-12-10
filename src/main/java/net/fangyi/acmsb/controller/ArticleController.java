@@ -14,9 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/articles")
@@ -97,7 +95,15 @@ public class ArticleController {
         }
         return ResponseEntity.ok(Result.success("查询成功", article));
     }
+        @GetMapping("/search")
+        public ResponseEntity<?> search(@RequestParam String keyword){
+            List<Article> articles = articleRepository.findAllByTitleLike("%" + keyword + "%");
+            List<Article> articles1 = articleRepository.findAllByContentLike("%" + keyword + "%");
 
+            Set<Article> combinedArticles = new HashSet<>(articles);
+            combinedArticles.addAll(articles1);
+            return ResponseEntity.ok(new ArrayList<>(combinedArticles));
+        }
 //    @GetMapping("/getcommentbyparentid")
 //    public ResponseEntity<?> getCommentByParentId(@RequestParam int parentid){
 //        List<Comment> comments = commentRepository.findAllByParentid(parentid);

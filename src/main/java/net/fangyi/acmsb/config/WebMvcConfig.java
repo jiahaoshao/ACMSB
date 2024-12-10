@@ -40,6 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         excludePath.add("/user/finduserbyuid");
         excludePath.add("/articles/getarticlebyaid");
         excludePath.add("/articles/getcommentbyparentid");
+        excludePath.add("/articles/search");
 
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
