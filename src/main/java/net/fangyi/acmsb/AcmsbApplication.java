@@ -5,6 +5,7 @@ import net.fangyi.acmsb.entity.Sign;
 import net.fangyi.acmsb.entity.User;
 import net.fangyi.acmsb.repository.SignRepository;
 import net.fangyi.acmsb.repository.UserRepository;
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 @SpringBootApplication
 //@EnableOpenApi
 @CrossOrigin
+@MapperScan("net.fangyi.acmsb.mapper")
 public class AcmsbApplication {
      Logger logger = LoggerFactory.getLogger(getClass());
 

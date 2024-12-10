@@ -18,10 +18,10 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleMapper articleMapper;
 
-    public Page<Article> getArticles(int page, int limit) {
+    public Page<Article> getArticles(int page, int limit, String status) {
         // 创建分页请求对象，page - 1 因为分页从 0 开始
         Pageable pageable = PageRequest.of(page - 1, limit);
-        return articleRepository.findAll(pageable);
+        return articleRepository.findByStatus(status, pageable);
     }
 
     @Override

@@ -19,4 +19,5 @@ public class Article {
     private String classify; //文章分类
     private String tags; //文章标签
     private String status; //文章状态
+
 }

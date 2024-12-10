@@ -4,6 +4,7 @@ import net.fangyi.acmsb.entity.Article;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.context.annotation.Bean;
 
 @Mapper
 public interface ArticleMapper {

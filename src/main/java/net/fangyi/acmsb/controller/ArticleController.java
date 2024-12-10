@@ -3,6 +3,7 @@ package net.fangyi.acmsb.controller;
 import net.fangyi.acmsb.Util.DateUtil;
 import net.fangyi.acmsb.entity.Article;
 import net.fangyi.acmsb.entity.ArticleRequest;
+import net.fangyi.acmsb.entity.Comment;
 import net.fangyi.acmsb.repository.ArticleRepository;
 import net.fangyi.acmsb.result.Result;
 import net.fangyi.acmsb.service.ArticleService;
@@ -27,6 +28,8 @@ public class ArticleController {
     @Autowired
     private ArticleRepository articleRepository;
 
+    //@Autowired
+    //private CommentRepository commentRepository;
     /**
      * 获取文章列表
      * @param page
@@ -36,22 +39,25 @@ public class ArticleController {
     @GetMapping("/getarticles")
     public ResponseEntity<?> getArticles(
             @RequestParam(defaultValue = "1") int page, // 默认第一页
-            @RequestParam(defaultValue = "10") int limit // 默认每页 10 条
+            @RequestParam(defaultValue = "10") int limit, // 默认每页 10 条
+            @RequestParam(defaultValue = "已发布") String status
     ) {
         // 获取分页结果
-        Page<Article> articlePage = articleService.getArticles(page, limit);
+        logger.info("get articles: page = {}, limit = {}, status = {}", page, limit, status);
 
-        if(articlePage.isEmpty())
-        {
-            for(int i = 0; i < 20; i ++)
-            {
-                Article article = new Article();
-                article.setTitle(i + "号文章");
-                article.setContent(i + "号文章的内容");
-                article.setAuthorId(i);
-                articleRepository.save(article);
-            }
-        }
+        Page<Article> articlePage = articleService.getArticles(page, limit, status);
+
+//        if(articlePage.isEmpty())
+//        {
+//            for(int i = 0; i < 20; i ++)
+//            {
+//                Article article = new Article();
+//                article.setTitle(i + "号文章");
+//                article.setContent(i + "号文章的内容");
+//                article.setAuthorId(i);
+//                articleRepository.save(article);
+//            }
+//        }
 
         // 构建返回的响应数据
         Map<String, Object> response = new HashMap<>();
@@ -82,9 +88,26 @@ public class ArticleController {
         }
         return ResponseEntity.ok(Result.success("保存成功", article));
     }
-    @GetMapping("/getArticleById")
-    public ResponseEntity<?> getArticleById(@RequestParam int id){
-        Article article=articleService.getArticleById(id);
-        return ResponseEntity.ok(Result.success("保存成功",article));
+
+    @GetMapping("/getarticlebyaid")
+    public ResponseEntity<?> getArticleByAid(@RequestParam int aid){
+        Article article = articleRepository.getArticleByAid(aid);
+        if(article == null) {
+            return ResponseEntity.ok(Result.error("文章不存在"));
+        }
+        return ResponseEntity.ok(Result.success("查询成功", article));
     }
+
+//    @GetMapping("/getcommentbyparentid")
+//    public ResponseEntity<?> getCommentByParentId(@RequestParam int parentid){
+//        List<Comment> comments = commentRepository.findAllByParentid(parentid);
+//        return ResponseEntity.ok(comments);
+//    }
+//
+//    @PostMapping("/addcomment")
+//    public ResponseEntity<?> addComment(@RequestBody Comment comment){
+//        comment.setCreateTime(DateUtil.getNowTime());
+//        commentRepository.save(comment);
+//        return ResponseEntity.ok(Result.success("评论成功", comment));
+//    }
 }
