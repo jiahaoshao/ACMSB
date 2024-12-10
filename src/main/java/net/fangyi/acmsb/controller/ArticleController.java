@@ -14,9 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/articles")
@@ -110,4 +108,17 @@ public class ArticleController {
 //        commentRepository.save(comment);
 //        return ResponseEntity.ok(Result.success("评论成功", comment));
 //    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestParam String keyword){
+        List<Article> articles = articleRepository.findAllByTitleLike("%" + keyword + "%");
+        List<Article> articles1 = articleRepository.findAllByContentLike("%" + keyword + "%");
+
+        Set<Article> combinedArticles = new HashSet<>(articles);
+        combinedArticles.addAll(articles1);
+
+        combinedArticles.removeIf(article -> article.getStatus().equals("草稿"));
+
+        return ResponseEntity.ok(new ArrayList<>(combinedArticles));
+    }
 }
