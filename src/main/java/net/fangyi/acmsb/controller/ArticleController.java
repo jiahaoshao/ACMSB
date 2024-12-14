@@ -1,9 +1,15 @@
 package net.fangyi.acmsb.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import net.fangyi.acmsb.Util.DateUtil;
 import net.fangyi.acmsb.entity.Article;
 import net.fangyi.acmsb.entity.ArticleRequest;
-import net.fangyi.acmsb.entity.Comment;
 import net.fangyi.acmsb.repository.ArticleRepository;
 import net.fangyi.acmsb.result.Result;
 import net.fangyi.acmsb.service.ArticleService;
@@ -18,44 +24,36 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/articles")
+@Tag(name = "文章控制器", description = "用于管理文章的接口")
 public class ArticleController {
     private static final Logger logger = LoggerFactory.getLogger(ArticleController.class);
     @Autowired
     private ArticleService articleService;
-
     @Autowired
     private ArticleRepository articleRepository;
 
-    //@Autowired
-    //private CommentRepository commentRepository;
     /**
      * 获取文章列表
-     * @param page
-     * @param limit
-     * @return
+     * @param page 当前页码
+     * @param limit 每页数量
+     * @param status 文章状态
+     * @return 分页的文章列表
      */
+    @Operation(summary = "获取文章列表", description = "根据分页参数和状态获取文章列表")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "成功获取文章列表",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+            @ApiResponse(responseCode = "400", description = "请求参数错误")
+    })
     @GetMapping("/getarticles")
     public ResponseEntity<?> getArticles(
-            @RequestParam(defaultValue = "1") int page, // 默认第一页
-            @RequestParam(defaultValue = "10") int limit, // 默认每页 10 条
-            @RequestParam(defaultValue = "已发布") String status
-    ) {
+            @Parameter(description = "当前页码，默认为1") @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "每页数量，默认为10") @RequestParam(defaultValue = "10") int limit,
+            @Parameter(description = "文章状态，默认为'已发布'") @RequestParam(defaultValue = "已发布") String status) {
         // 获取分页结果
         logger.info("get articles: page = {}, limit = {}, status = {}", page, limit, status);
 
         Page<Article> articlePage = articleService.getArticles(page, limit, status);
-
-//        if(articlePage.isEmpty())
-//        {
-//            for(int i = 0; i < 20; i ++)
-//            {
-//                Article article = new Article();
-//                article.setTitle(i + "号文章");
-//                article.setContent(i + "号文章的内容");
-//                article.setAuthorId(i);
-//                articleRepository.save(article);
-//            }
-//        }
 
         // 构建返回的响应数据
         Map<String, Object> response = new HashMap<>();
@@ -68,27 +66,42 @@ public class ArticleController {
     }
 
     /**
-     * 添加文章
-     * @param article
-     * @return
+     * 添加或更新文章
+     * @param articleRequest 文章信息
+     * @return 操作结果
      */
-
+    @Operation(summary = "添加或更新文章", description = "根据提供的文章信息添加或更新文章")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "成功添加或更新文章",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+            @ApiResponse(responseCode = "400", description = "请求体错误")
+    })
     @PostMapping("/update_article")
-    public ResponseEntity<?> updateArticle(@RequestBody ArticleRequest article){
-        logger.info("update article: {}", article.toString());
-        if(article.getAid() == -1) {
-            article.setCreateTime(DateUtil.getNowTime());
-             Article article1 = articleRepository.save(article.toArticle());
-            return ResponseEntity.ok(Result.success("保存成功", article1));
+    public ResponseEntity<?> updateArticle(@RequestBody @Parameter(description = "文章信息") ArticleRequest articleRequest) {
+        logger.info("update article: {}", articleRequest.toString());
+        if(articleRequest.getAid() == -1) {
+            articleRequest.setCreateTime(DateUtil.getNowTime());
+            Article article = articleRepository.save(articleRequest.toArticle());
+            return ResponseEntity.ok(Result.success("保存成功", article));
+        } else {
+            articleService.updateArticle(articleRequest.toArticle());
         }
-        else {
-            articleService.updateArticle(article.toArticle());
-        }
-        return ResponseEntity.ok(Result.success("保存成功", article));
+        return ResponseEntity.ok(Result.success("保存成功", articleRequest));
     }
 
+    /**
+     * 根据ID获取文章
+     * @param aid 文章ID
+     * @return 文章详情
+     */
+    @Operation(summary = "根据ID获取文章", description = "根据文章ID获取文章详情")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "成功获取文章",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+            @ApiResponse(responseCode = "404", description = "文章不存在")
+    })
     @GetMapping("/getarticlebyaid")
-    public ResponseEntity<?> getArticleByAid(@RequestParam int aid){
+    public ResponseEntity<?> getArticleByAid(@Parameter(description = "文章ID") @RequestParam int aid) {
         Article article = articleRepository.getArticleByAid(aid);
         if(article == null) {
             return ResponseEntity.ok(Result.error("文章不存在"));
@@ -96,21 +109,19 @@ public class ArticleController {
         return ResponseEntity.ok(Result.success("查询成功", article));
     }
 
-//    @GetMapping("/getcommentbyparentid")
-//    public ResponseEntity<?> getCommentByParentId(@RequestParam int parentid){
-//        List<Comment> comments = commentRepository.findAllByParentid(parentid);
-//        return ResponseEntity.ok(comments);
-//    }
-//
-//    @PostMapping("/addcomment")
-//    public ResponseEntity<?> addComment(@RequestBody Comment comment){
-//        comment.setCreateTime(DateUtil.getNowTime());
-//        commentRepository.save(comment);
-//        return ResponseEntity.ok(Result.success("评论成功", comment));
-//    }
-
+    /**
+     * 搜索文章
+     * @param keyword 搜索关键字
+     * @return 搜索结果
+     */
+    @Operation(summary = "搜索文章", description = "根据关键字搜索文章")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "成功获取搜索结果",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+            @ApiResponse(responseCode = "400", description = "请求参数错误")
+    })
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam String keyword){
+    public ResponseEntity<?> search(@Parameter(description = "搜索关键字") @RequestParam String keyword) {
         List<Article> articles = articleRepository.findAllByTitleLike("%" + keyword + "%");
         List<Article> articles1 = articleRepository.findAllByContentLike("%" + keyword + "%");
 

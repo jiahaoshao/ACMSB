@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS sign
     phone    VARCHAR(20),
     salt     VARCHAR(200)
 );
-# Insert into sign (username, password, email, phone) values ('admin', '123456', 'admin@admin.com', '1234567890');
 
 #DROP TABLE IF EXISTS user;
 CREATE TABLE IF NOT EXISTS user

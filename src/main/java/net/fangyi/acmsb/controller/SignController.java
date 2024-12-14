@@ -3,6 +3,9 @@ package net.fangyi.acmsb.controller;
 import com.alibaba.fastjson.JSONObject;
 import io.micrometer.common.util.StringUtils;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import net.fangyi.acmsb.AcmsbApplication;
 import net.fangyi.acmsb.Util.DateUtil;
@@ -40,6 +43,7 @@ import java.util.Random;
 @RestController
 @RequestMapping("/sign")
 @CrossOrigin //解决跨域问题
+@Tag(name = "SignController", description = "处理用户注册、登录、重设密码等功能")
 
 /**
  *
@@ -69,6 +73,7 @@ public class SignController {
      * @param request   HttpServletRequest对象
      * @return
      */
+    @Operation(summary = "获取公钥", description = "登录时获取公钥")
     @ApiOperation(value = "登陆，获取公钥", httpMethod = "GET")
     @GetMapping("/getkey")
     public ResponseEntity<?> getKey(HttpServletRequest request) {
@@ -97,9 +102,10 @@ public class SignController {
      * @param request     HttpServletRequest对象
      * @param signInRequest      登录请求体
      */
+    @Operation(summary = "获取公钥", description = "登录时获取公钥")
     @ApiOperation(value = "登录", httpMethod = "POST")
     @PostMapping(value = "/signin")
-    public ResponseEntity<?> signin(HttpServletRequest request, @RequestBody SignInRequest signInRequest) {
+    public ResponseEntity<?> signin(HttpServletRequest request,@Parameter(description = "登录请求体") @RequestBody SignInRequest signInRequest) {
         String privateKey = (String) request.getSession().getAttribute("privateKey");
         logger.info("signin privateKey: {}", privateKey);
         String account = signInRequest.getUserAccount();
@@ -147,9 +153,10 @@ public class SignController {
      * @param request     HttpServletRequest对象
      * @param signUpRequest       登录请求体
      */
+    @Operation(summary = "重设密码", description = "用户重设密码接口")
     @ApiOperation(value = "重设密码", httpMethod = "POST")
     @PostMapping(value = "/resetpassword")
-    public ResponseEntity<?> updatePasswordCostDashboard(HttpServletRequest request, @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<?> updatePasswordCostDashboard(HttpServletRequest request,@Parameter(description = "重设密码请求体") @RequestBody SignUpRequest signUpRequest) {
         String privateKey = (String) request.getSession().getAttribute("privateKey");
         String account = signUpRequest.getUserAccount();
         String password = signUpRequest.getPassword();
@@ -184,8 +191,9 @@ public class SignController {
      * @param request    HttpServletRequest对象
      * @param signUpRequest        注册请求体
      */
+    @Operation(summary = "用户注册", description = "用户注册接口")
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(HttpServletRequest request, @RequestBody SignUpRequest signUpRequest){
+    public ResponseEntity<?> signup(HttpServletRequest request,@Parameter(description = "注册请求体") @RequestBody SignUpRequest signUpRequest){
         String privateKey = (String) request.getSession().getAttribute("privateKey");
         logger.info("signup privateKey: {}", privateKey);
         String account = signUpRequest.getUserAccount();
@@ -226,8 +234,9 @@ public class SignController {
      * @param request 请求对象
      * @return
      */
+    @Operation(summary = "发送邮箱验证码", description = "发送邮箱验证码并返回验证码")
     @GetMapping("/getemailverifycode")
-    public ResponseEntity<?> getEmailVerifyCode(HttpServletRequest request, @RequestParam String email) {
+    public ResponseEntity<?> getEmailVerifyCode(HttpServletRequest request,@Parameter(description = "用户邮箱") @RequestParam String email) {
         //随机生成一个四位数的验证码
         int yzm = new Random().nextInt(9999) % (9999 - 1000 + 1) + 1000;
         //创建简单邮件消息
@@ -247,8 +256,9 @@ public class SignController {
         return ResponseEntity.ok(Result.success("验证码已发送至邮箱，请查收！", yzm));
     }
 
+    @Operation(summary = "发送手机验证码", description = "发送手机验证码")
     @GetMapping("/getphoneverifycode")
-    public ResponseEntity<?> getPhoneVerifyCode(@RequestParam String phone) throws IOException, InterruptedException {
+    public ResponseEntity<?> getPhoneVerifyCode(@Parameter(description = "用户手机号") @RequestParam String phone) throws IOException, InterruptedException {
         String apiUrl = "https://apis.netstart.cn/music/captcha/sent?phone=" + phone;
 
         HttpClient client = HttpClient.newHttpClient();
