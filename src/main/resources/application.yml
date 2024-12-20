@@ -68,7 +68,7 @@ Github:
   message: acm_image       # 提交信息
   OWNER: fangyi002       # 仓库的所有者，名称不区分大小写，GitHub的账户名称
   REPO: picture_bed           # 仓库名称
-  Authorization: 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  # 填写上面申请的token 每次上传github这个token都会失效要重新获取
+  Authorization:   # 填写上面申请的token 每次上传github这个token都会失效要重新获取
 
 
 
