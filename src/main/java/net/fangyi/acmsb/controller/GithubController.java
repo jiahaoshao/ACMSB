@@ -1,6 +1,5 @@
 package net.fangyi.acmsb.controller;
 
-import io.swagger.annotations.ApiResponse;
 import net.fangyi.acmsb.Util.Base64Util;
 import net.fangyi.acmsb.Util.FileUtils;
 import net.fangyi.acmsb.result.Result;

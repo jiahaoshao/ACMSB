@@ -2,7 +2,6 @@ package net.fangyi.acmsb.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import io.micrometer.common.util.StringUtils;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -74,7 +73,7 @@ public class SignController {
      * @return
      */
     @Operation(summary = "获取公钥", description = "登录时获取公钥")
-    @ApiOperation(value = "登陆，获取公钥", httpMethod = "GET")
+//    @ApiOperation(value = "登陆，获取公钥", httpMethod = "GET")
     @GetMapping("/getkey")
     public ResponseEntity<?> getKey(HttpServletRequest request) {
         RSAKey key = generateKey(request);
@@ -103,7 +102,7 @@ public class SignController {
      * @param signInRequest      登录请求体
      */
     @Operation(summary = "获取公钥", description = "登录时获取公钥")
-    @ApiOperation(value = "登录", httpMethod = "POST")
+//    @ApiOperation(value = "登录", httpMethod = "POST")
     @PostMapping(value = "/signin")
     public ResponseEntity<?> signin(HttpServletRequest request,@Parameter(description = "登录请求体") @RequestBody SignInRequest signInRequest) {
         String privateKey = (String) request.getSession().getAttribute("privateKey");
@@ -154,7 +153,7 @@ public class SignController {
      * @param signUpRequest       登录请求体
      */
     @Operation(summary = "重设密码", description = "用户重设密码接口")
-    @ApiOperation(value = "重设密码", httpMethod = "POST")
+//    @ApiOperation(value = "重设密码", httpMethod = "POST")
     @PostMapping(value = "/resetpassword")
     public ResponseEntity<?> updatePasswordCostDashboard(HttpServletRequest request,@Parameter(description = "重设密码请求体") @RequestBody SignUpRequest signUpRequest) {
         String privateKey = (String) request.getSession().getAttribute("privateKey");

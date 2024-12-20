@@ -41,7 +41,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         excludePath.add("/articles/getarticlebyaid");
         excludePath.add("/articles/getcommentbyparentid");
         excludePath.add("/swagger-ui/**");
-        excludePath.add("/swagger-ui/index,html");
+        excludePath.add("/swagger-ui/index.html");
+        excludePath.add("/**");
 
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
@@ -63,5 +64,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         logger.info("article image file path: {}", filepath);
         registry.addResourceHandler("static/images/article_image/**")
                 .addResourceLocations(filepath);
+
     }
 }
