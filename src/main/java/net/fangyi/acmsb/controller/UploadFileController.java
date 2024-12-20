@@ -4,6 +4,12 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import net.fangyi.acmsb.Util.UploadFileUtil;
 import net.fangyi.acmsb.Util.UploadGiteeImgBed;
 import net.fangyi.acmsb.repository.UserRepository;
@@ -22,6 +28,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/upload")
 @CrossOrigin //解决跨域问题
+@Tag(name = "UploadFileController", description = "处理文件上传相关接口")
 public class UploadFileController {
     private static final Logger logger = LoggerFactory.getLogger(UploadFileController.class);
 
@@ -41,9 +48,14 @@ public class UploadFileController {
         AVATAR_TYPE.add("image/gif");
     }
 
-    @Operation(summary = "上传头像到本地")
+    @Operation(summary = "上传头像到本地", description = "用户上传头像图片")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "上传成功"),
+            @ApiResponse(responseCode = "400", description = "请求参数错误")
+    })
     @PostMapping("/avatar")
-    public ResponseEntity<?> upload_avatar(@RequestParam("file") MultipartFile file, @RequestParam("uid") int uid) throws IOException {
+    public ResponseEntity<?> upload_avatar(@Parameter(description = "文件对象") @RequestParam("file") MultipartFile file,
+                                           @Parameter(description = "用户ID") @RequestParam("uid") int uid) throws IOException {
         if(userRepository.findByUid(uid) == null){
             return ResponseEntity.ok(Result.error("用户不存在"));
         }
@@ -65,9 +77,13 @@ public class UploadFileController {
         return ResponseEntity.ok(Result.success("上传成功"));
     }
 
-    @Operation(summary = "上传图片到本地")
+    @Operation(summary = "上传图片到本地", description = "上传文章图片")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "上传成功"),
+            @ApiResponse(responseCode = "400", description = "请求参数错误")
+    })
     @PostMapping("/article_images")
-    public ResponseEntity<?> uploadArticleImages(@RequestParam("files") MultipartFile[] files) throws IOException {
+    public ResponseEntity<?> uploadArticleImages(@Parameter(description = "文件对象数组") @RequestParam("files") MultipartFile[] files) throws IOException {
         List<String> uploadedUrls = new ArrayList<>();
         for (MultipartFile file : files) {
             if (file.isEmpty()) {
@@ -89,14 +105,13 @@ public class UploadFileController {
         return ResponseEntity.ok(Result.success("上传成功", uploadedUrls));
     }
 
-    /**
-     *  上传图片
-     * @param multipartFile 文件对象
-     * @return
-     * @throws IOException
-     */
+    @Operation(summary = "上传图片", description = "上传图片到GiteeImgBed")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "上传成功"),
+            @ApiResponse(responseCode = "400", description = "请求参数错误")
+    })
     @PostMapping("/uploadImg")
-    public ResponseEntity<?> uploadImg(@RequestParam("file")MultipartFile multipartFile) throws IOException {
+    public ResponseEntity<?> uploadImg(@Parameter(description = "文件对象") @RequestParam("file") MultipartFile multipartFile) throws IOException {
         logger.info("uploadImg()请求已来临...");
         //根据文件名生成指定的请求url
         String originalFilename = multipartFile.getOriginalFilename();
@@ -120,5 +135,4 @@ public class UploadFileController {
         logger.info("响应data为：{}", content.getObj("download_url"));
         return  ResponseEntity.ok(Result.success("上传成功", content.getObj("download_url")));
     }
-
 }

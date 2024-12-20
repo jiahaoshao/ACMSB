@@ -40,6 +40,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         excludePath.add("/user/finduserbyuid");
         excludePath.add("/articles/getarticlebyaid");
         excludePath.add("/articles/getcommentbyparentid");
+        excludePath.add("/swagger-ui/**");
+        excludePath.add("/swagger-ui/index,html");
 
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/acm?serverTimezone=UTC&characterEncoding=utf-8
+    url: jdbc:mysql://127.0.0.1:3306/create_space?serverTimezone=UTC&characterEncoding=utf-8
     username: root
-    password: fangyi
+    password: zzx031226#
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
@@ -37,6 +37,8 @@ spring:
       max-request-size: 100MB
   mvc:
     static-path-pattern: static/**
+    pathmatch:
+      matching-strategy: ant_path_matcher
   devtools:
     restart:
           # 开启热部署（更改文件后，自动重启）
@@ -56,7 +58,7 @@ server:
   ssl:
     key-store: classpath:https-java.keystore
     key-alias: tomcat_https
-    enabled: true
+    enabled: false
     key-password: 123456
     key-store-password: 123456
 Github:

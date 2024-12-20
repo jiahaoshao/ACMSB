@@ -45,6 +45,18 @@ public class ArticleController {
 
         Page<Article> articlePage = articleService.getArticles(page, limit, status);
 
+//        if(articlePage.isEmpty())
+//        {
+//            for(int i = 0; i < 20; i ++)
+//            {
+//                Article article = new Article();
+//                article.setTitle(i + "号文章");
+//                article.setContent(i + "号文章的内容");
+//                article.setAuthorId(i);
+//                articleRepository.save(article);
+//            }
+//        }
+
         // 构建返回的响应数据
         Map<String, Object> response = new HashMap<>();
         response.put("data", articlePage.getContent()); // 当前页的数据
@@ -76,7 +88,7 @@ public class ArticleController {
     }
 
     @GetMapping("/getarticlebyaid")
-    public ResponseEntity<?> getArticleByAid(@RequestParam("aid") int aid){
+    public ResponseEntity<?> getArticleByAid(@RequestParam int aid){
         Article article = articleRepository.getArticleByAid(aid);
         if(article == null) {
             return ResponseEntity.ok(Result.error("文章不存在"));
