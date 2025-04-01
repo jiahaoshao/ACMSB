@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import net.fangyi.acmsb.Util.DateUtil;
+import net.fangyi.acmsb.Util.UploadFileUtil;
 import net.fangyi.acmsb.entity.Article;
 import net.fangyi.acmsb.entity.ArticleRequest;
 import net.fangyi.acmsb.repository.ArticleRepository;
@@ -19,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -31,6 +34,16 @@ public class ArticleController {
     private ArticleService articleService;
     @Autowired
     private ArticleRepository articleRepository;
+
+    public static final int IMAGE_MAX_SIZE = 5 * 1024 * 1024;
+    /* 限制上传文件的类型 */
+    public static final List<String> IMAGE_TYPE = new ArrayList<>();
+    static { // 初始化
+        IMAGE_TYPE.add("image/jpeg");
+        IMAGE_TYPE.add("image/png");
+        IMAGE_TYPE.add("image/bmp");
+        IMAGE_TYPE.add("image/gif");
+    }
 
     /**
      * 获取文章列表
@@ -131,5 +144,33 @@ public class ArticleController {
         combinedArticles.removeIf(article -> article.getStatus().equals("草稿"));
 
         return ResponseEntity.ok(new ArrayList<>(combinedArticles));
+    }
+
+    /**
+     * 上传文章图片
+     */
+    @Operation(summary = "上传文章图片", description = "上传文章图片")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "上传成功",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Result.class))),
+            @ApiResponse(responseCode = "400", description = "请求参数错误")
+    })
+    @PostMapping("/upload_article_images")
+    public ResponseEntity<?> uploadArticleImages(@Parameter(description = "文件对象数组") @RequestParam("files") MultipartFile multipartFile) throws IOException {
+        if (multipartFile.isEmpty()) {
+            return ResponseEntity.ok(Result.error("文件为空"));
+        }
+        if (multipartFile.getSize() > IMAGE_MAX_SIZE) {
+            return ResponseEntity.ok(Result.error("文件大小超出限制"));
+        }
+        String contentType = multipartFile.getContentType();
+        if (!IMAGE_TYPE.contains(contentType)) {
+            return ResponseEntity.ok(Result.error("文件类型不支持"));
+        }
+        String articleImageUrl = UploadFileUtil.upload(multipartFile, "static/images/article_image");
+        if (articleImageUrl == null) {
+            return ResponseEntity.ok(Result.error("上传失败"));
+        }
+        return ResponseEntity.ok(Result.success("上传成功", articleImageUrl));
     }
 }

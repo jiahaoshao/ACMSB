@@ -49,7 +49,7 @@ spring:
           additional-paths: src/main/java
           log-condition-evaluation-delta: false
   upload:
-    dir: "http://26.201.192.85:8181"
+    dir: "https://127.0.0.1:8181"
   output:
     ansi:
       enabled: always
@@ -58,7 +58,7 @@ server:
   ssl:
     key-store: classpath:https-java.keystore
     key-alias: tomcat_https
-    enabled: false
+    enabled: true
     key-password: 123456
     key-store-password: 123456
 Github:
